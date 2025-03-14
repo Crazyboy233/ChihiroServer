@@ -1,10 +1,11 @@
-#ifndef __SYLAR_LOG_H__
-#define __SYLAR_LOG_H__
+#ifndef __CHIHIRO_LOG_H__
+#define __CHIHIRO_LOG_H__
 
 #include <string>
 #include <stdint.h>
 #include <memory>
-namespace sylar{
+#include <list>
+namespace chihiro{
 
 // 日志事件
 class LogEvent{
@@ -23,6 +24,7 @@ private:
 };
 
 // 日志级别
+// TODO:可以考虑 enum class 
 class LogLevel{
 public:
     
@@ -51,7 +53,7 @@ public:
 
     virtual ~LogAppender();  // 可能有很多输出地，所以设置为虚析构函数
     
-    void log(LogLevel level, LogEvent::ptr event);
+    void log(LogLevel::Level level, LogEvent::ptr event);
 private:
     LogLevel::Level m_level;
 };
@@ -63,13 +65,26 @@ class Logger{
 public:
     using ptr = std::shared_ptr<Logger>;
 
-    Logger(const std::string name = "root");
+    Logger(const std::string & name = "root");
 
-    void log(LogLevel level, LogEvent::ptr event);
+    void log(LogLevel::Level level, LogEvent::ptr event);
+
+    void addAppender(LogAppender::ptr appender);
+    void delAppender(LogAppender::ptr appender);
+
+    LogLevel::Level setLevel(LogLevel::Level level);
+    LogLevel::Level getLevel() const;
+
+    void debug(LogEvent::ptr event);
+    void info(LogEvent::ptr event);
+    void warn(LogEvent::ptr event);
+    void error(LogEvent::ptr event);
+    void fatal(LogEvent::ptr event);
+
 private:
-    std::string m_name;
-    LogLevel::Level m_level;
-    LogAppender::ptr m_event;
+    std::string m_name;                         // 日志名称
+    LogLevel::Level m_level;                    // 日志级别
+    std::list<LogAppender::ptr> m_appenders;    // Appender集合
 };
 
 // 输出到控制台
@@ -83,4 +98,4 @@ class FileLogAppender : public LogAppender {
 };
 }
 
-#endif __SYLAR_LOG_H__
+#endif __CHIHIRO_LOG_H__
