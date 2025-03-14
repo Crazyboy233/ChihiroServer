@@ -1,6 +1,15 @@
 #include "log.h"
+#include <iostream>
 
 namespace chihiro {
+
+void LogAppender::setFormatter(LogFormatter::ptr format) {
+    m_formatter = format;
+}
+
+LogFormatter::ptr LogAppender::getFormatter() const {
+    return m_formatter;
+}
 
 Logger::Logger(const std::string & name) 
     :m_name(name)
@@ -55,6 +64,33 @@ void Logger::error(LogEvent::ptr event) {
 
 void Logger::fatal(LogEvent::ptr event) {
     log(LogLevel::Level::FATAL, event);
+}
+
+
+void StdoutLogAppender::log(LogLevel::Level level, LogEvent::ptr event) {
+    if(level >= m_level){
+        std::cout << m_formatter->format(event);
+    }
+}
+
+FileLogAppender::FileLogAppender(const std::string &filename) 
+    :m_filename(filename)   {
+}
+
+void FileLogAppender::log(LogLevel::Level level, LogEvent::ptr event) {
+    if(level >= m_level) {
+        m_filestream << m_formatter->format(event);
+    }
+}
+
+bool FileLogAppender::reopen() {
+    if(m_filestream) {
+        m_filestream.close();
+    }
+    m_filestream.open(m_filename);
+
+    // 文件打开成功返回True
+    return !!m_filestream;
 }
 
 }

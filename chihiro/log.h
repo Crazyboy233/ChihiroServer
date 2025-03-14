@@ -5,7 +5,10 @@
 #include <stdint.h>
 #include <memory>
 #include <list>
-namespace chihiro{
+#include <fstream>
+#include <sstream>
+
+namespace chihiro {
 
 // 日志事件
 class LogEvent{
@@ -53,9 +56,15 @@ public:
 
     virtual ~LogAppender();  // 可能有很多输出地，所以设置为虚析构函数
     
-    void log(LogLevel::Level level, LogEvent::ptr event);
-private:
+    virtual void log(LogLevel::Level level, LogEvent::ptr event) = 0;
+
+    void setFormatter(LogFormatter::ptr format);
+    LogFormatter::ptr getFormatter() const;
+
+// 保护权限，保证派生类可以访问
+protected:
     LogLevel::Level m_level;
+    LogFormatter::ptr m_formatter;
 };
 
 
@@ -89,13 +98,29 @@ private:
 
 // 输出到控制台
 class StdoutLogAppender : public LogAppender {
+public:
+    using ptr = std::shared_ptr<StdoutLogAppender>;
 
+    void log(LogLevel::Level level, LogEvent::ptr event) override;
+private:
 };
 
 // 输出到文件
 class FileLogAppender : public LogAppender {
+public:
+    using ptr = std::shared_ptr<FileLogAppender>;
+    FileLogAppender(const std::string & filename);
 
+    void log(LogLevel::Level level, LogEvent::ptr event) override;
+
+    /// @brief 重新打开文件
+    /// @return 成功返回True，失败返回False
+    bool reopen();
+private:
+    std::string m_filename;
+    std::ofstream m_filestream;
 };
+
 }
 
 #endif __CHIHIRO_LOG_H__
