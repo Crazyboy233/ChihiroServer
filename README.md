@@ -20,7 +20,7 @@ CMakeLists.txt -- cmake的定义文件
 
 Makefile 
 
-sylar -- 源代码路径 
+chihiro -- 源代码路径 
 
 tests -- 测试代码路径
 
