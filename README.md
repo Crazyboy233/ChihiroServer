@@ -46,3 +46,4 @@ tests -- 测试代码路径
 
 ## 推荐系统
 
+代码参考sylar。原作者：sylar，github地址：https://github.com/sylar-yin/sylar
