@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libchihiro_log.a CMakeFiles/chihiro_log.dir/chihiro/log/src/LogLevel.cc.o CMakeFiles/chihiro_log.dir/chihiro/log/src/LogAppender.cc.o CMakeFiles/chihiro_log.dir/chihiro/log/src/Logger.cc.o CMakeFiles/chihiro_log.dir/chihiro/log/src/LogEvent.cc.o CMakeFiles/chihiro_log.dir/chihiro/log/src/LogFormatter.cc.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libchihiro_log.a

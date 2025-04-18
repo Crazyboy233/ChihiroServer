@@ -1,0 +1,3 @@
+/Users/bytedance/Desktop/ChihiroServer/build/CMakeFiles/chihiro_log.dir
+/Users/bytedance/Desktop/ChihiroServer/build/CMakeFiles/edit_cache.dir
+/Users/bytedance/Desktop/ChihiroServer/build/CMakeFiles/rebuild_cache.dir
