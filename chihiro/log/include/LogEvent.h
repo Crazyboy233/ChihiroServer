@@ -2,7 +2,6 @@
 #define LOGGEREVENT_H
 
 #include "Logger.h"
-
 namespace chihiro {
 
 class Logger;

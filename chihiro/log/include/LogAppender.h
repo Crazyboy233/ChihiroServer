@@ -1,16 +1,14 @@
 #ifndef __CHIHIRO_LOGAPPENDER_H__
 #define __CHIHIRO_LOGAPPENDER_H__
 
-#include "LogFormatter.h"
-#include "LogLevel.h"
-#include "LogEvent.h"
+#include "Logger.h"
 #include <sstream>
 #include <fstream>
 
 namespace chihiro {
 
-class Logger;
-class LogEvent;
+// class Logger;
+// class LogEvent;
 
 // 日志输出地
 class LogAppender {

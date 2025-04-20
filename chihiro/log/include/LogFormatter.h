@@ -2,9 +2,9 @@
 #define LOGFORMATTER_H
 
 #include "Logger.h"
-#include "LogEvent.h"
 namespace chihiro {
-
+    
+class Logger;
 
 // 日志格式器
 class LogFormatter {

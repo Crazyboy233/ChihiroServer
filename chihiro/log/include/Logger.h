@@ -3,12 +3,13 @@
 
 #include "LogLevel.h"
 #include "LogAppender.h"
+#include "LogEvent.h"
+#include "LogFormatter.h"
 #include <list>
 
+// 添加LogFormatter的前置声明
 namespace chihiro {
-
-// 前置声明
-class LogEvent;
+    
 class LogFormatter;
 
 // 日志器
