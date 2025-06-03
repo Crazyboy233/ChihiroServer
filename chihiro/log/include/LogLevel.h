@@ -16,6 +16,7 @@ public:
         ERROR = 4,
         FATAL = 5
     };
+    
     static std::string toString(LogLevel::Level level);
 };
 

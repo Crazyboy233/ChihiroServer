@@ -2,6 +2,8 @@
 #define LOGFORMATTER_H
 
 #include "Logger.h"
+#include <vector>
+
 namespace chihiro {
     
 class Logger;
@@ -13,7 +15,9 @@ public:
 
     LogFormatter(const std::string & pattern);
 
-    std::string format(Logger::ptr logger, LogLevel::Level leverl, LogEvent::ptr event);
+    // std::string format(Logger::ptr logger, LogLevel::Level leverl, LogEvent::ptr event);
+
+    std::string format(LogLevel::Level leverl, LogEvent::ptr event);
 
     void init();
 
@@ -27,7 +31,7 @@ public:
         using ptr = std::shared_ptr<FormatItem>;
         virtual ~FormatItem() {}
 
-        virtual void format(std::ostream & os, Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) = 0;
+        // virtual void format(std::ostream & os, Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) = 0;
     };
 private:
     std::string m_pattern;                  // 输出格式

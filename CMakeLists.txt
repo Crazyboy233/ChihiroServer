@@ -22,9 +22,3 @@ target_include_directories(chihiro_log
     PUBLIC 
     ${LOG_INCLUDE_DIR}
 )
-
-if(MSVC)
-    target_compile_options(chihiro_log PRIVATE /W4 /WX)
-else()
-    target_compile_options(chihiro_log PRIVATE -Wall -Wextra -Werror)
-endif()

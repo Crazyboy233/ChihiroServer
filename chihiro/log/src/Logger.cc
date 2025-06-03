@@ -9,7 +9,7 @@ Logger::Logger(const std::string & name)
 }
 
 void Logger::log(LogLevel::Level level, LogEvent::ptr event) {
-    auto self = shared_from_this();
+    auto self = shared_from_this(); 
     if(level > m_level) {
         for(auto it : m_appenders) {
             it->log(self, level, event);

@@ -8,7 +8,13 @@ namespace chihiro {
 class LoggerManager {
 public:
     using ptr = std::shared_ptr<LoggerManager>;
+
+    // 禁用拷贝构造和赋值运算符函数
+    LoggerManager(const LoggerManager&) = delete;
+    LoggerManager& operator=(const LoggerManager&) = delete;
+
     LoggerManager();
+    
     // 获取日志器，如果原来没有，就创建一个默认日志器。
     Logger::ptr getLogger(const std::string & name);
 
