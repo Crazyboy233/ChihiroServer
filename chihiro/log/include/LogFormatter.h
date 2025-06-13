@@ -1,7 +1,7 @@
 #ifndef LOGFORMATTER_H
 #define LOGFORMATTER_H
 
-#include "Logger.h"
+#include "LogEvent.h"
 #include <vector>
 
 namespace chihiro {
@@ -13,30 +13,37 @@ class LogFormatter {
 public:
     using ptr = std::shared_ptr<LogFormatter>;
 
-    LogFormatter(const std::string & pattern);
+    virtual std::string format(const LogEvent::ptr& event) = 0;
 
-    // std::string format(Logger::ptr logger, LogLevel::Level leverl, LogEvent::ptr event);
+    virtual ~LogFormatter() = default;
+};
 
-    std::string format(LogLevel::Level leverl, LogEvent::ptr event);
+// 简单的模式格式化
+class PatternFormatter : public LogFormatter {
+public: 
+    using ptr = std::shared_ptr<PatternFormatter>;
 
-    void init();
+    PatternFormatter(const std::string & pattern);
+    
+    std::string format(const LogEvent::ptr& event) override;
 
-    bool isError() const { return m_error; }
+    bool isError() const;
 
-    std::string getPattern() const { return m_pattern; }
 public:
-    // 具体日志格式项
     class FormatItem {
     public:
         using ptr = std::shared_ptr<FormatItem>;
-        virtual ~FormatItem() {}
-
-        // virtual void format(std::ostream & os, Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) = 0;
+        virtual ~FormatItem() = default;
+        virtual void format(std::ostream& os, const LogEvent::ptr& event) = 0;
     };
+
 private:
+    // 解析格式字符串并初始化 items_
+    void init();
+
     std::string m_pattern;                  // 输出格式
-    std::vector<FormatItem::ptr> m_items;   // 通过日志解析出来的格式项
-    bool m_error = false;                   // 是否解析出错
+    std::vector<FormatItem::ptr> m_items;   // 解析后的格式化列表
+    bool m_error;                   // 是否解析出错
 };
 
 } // namespace chihiro

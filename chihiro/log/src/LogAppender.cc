@@ -1,36 +1,56 @@
-#include "../include/LogAppender.h"
+#include "LogAppender.h"
 #include <iostream>
 
 namespace chihiro {
+
+LogAppender::~LogAppender() {
+
+}
 
 void LogAppender::setFormatter(LogFormatter::ptr format) {
     m_formatter = format;
 }
 
-void StdoutLogAppender::log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) {
-    if(level >= m_level){
-        std::cout << m_formatter->format(logger, level, event);
+LogFormatter::ptr LogAppender::getFormatter() const {
+    return nullptr;
+}
+
+/* ===============================输出到控制台===============================*/
+
+StdoutLogAppender::StdoutLogAppender() {
+    // 创建输出格式
+    auto patternFormatter = std::make_shared<PatternFormatter>("123");
+    setFormatter(patternFormatter);
+}
+
+void StdoutLogAppender::append(LogEvent::ptr event) {
+    if(m_formatter == nullptr) {
+        throw std::runtime_error("No formatter set for ConsoleAppender");
     }
+    
+    std::lock_guard<std::mutex> lock(m_mutex);
+    std::cout << m_formatter->format(event);
 }
 
-FileLogAppender::FileLogAppender(const std::string &filename) 
-    :m_filename(filename)   {
-}
+/* ===============================输出到文件===============================*/
 
-void FileLogAppender::log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) {
-    if(level >= m_level) {
-        m_filestream << m_formatter->format(logger, level, event);
-    }
-}
+// FileLogAppender::FileLogAppender(const std::string &filename) 
+//     :m_filename(filename)   {
+// }
 
-bool FileLogAppender::reopen() {
-    if(m_filestream) {
-        m_filestream.close();
-    }
-    m_filestream.open(m_filename);
+// void FileLogAppender::append(LogEvent::ptr event) {
+//     m_filestream << m_formatter->format(event);
 
-    // 文件打开成功返回True
-    return !!m_filestream;
-}
+// }
+
+// bool FileLogAppender::reopen() {
+//     if(m_filestream) {
+//         m_filestream.close();
+//     }
+//     m_filestream.open(m_filename);
+
+//     // 文件打开成功返回True
+//     return !!m_filestream;
+// }
 
 }
