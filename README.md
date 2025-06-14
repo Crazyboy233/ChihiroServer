@@ -10,15 +10,9 @@ cmake
 
 ## 项目路径
 
-bin -- 二进制
-
-build -- 中间文件路径
-
 cmake --cmake函数文件夹
 
 CMakeLists.txt -- cmake的定义文件
-
-Makefile 
 
 chihiro -- 源代码路径 
 

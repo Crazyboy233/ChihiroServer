@@ -14,7 +14,7 @@ class LogAppender {
 public:
     using ptr = std::shared_ptr<LogAppender>;
 
-    virtual ~LogAppender();  // 可能有很多输出地，所以设置为虚析构函数
+    virtual ~LogAppender(); 
     
     virtual void append(LogEvent::ptr event) = 0;
 

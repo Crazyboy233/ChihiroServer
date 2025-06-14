@@ -5,8 +5,6 @@
 #include <vector>
 
 namespace chihiro {
-    
-class Logger;
 
 // 日志格式器
 class LogFormatter {

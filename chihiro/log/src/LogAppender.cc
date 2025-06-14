@@ -19,8 +19,8 @@ LogFormatter::ptr LogAppender::getFormatter() const {
 
 StdoutLogAppender::StdoutLogAppender() {
     // 创建输出格式
-    auto patternFormatter = std::make_shared<PatternFormatter>("123");
-    setFormatter(patternFormatter);
+    auto patternFormatter = std::make_shared<PatternFormatter>("%d [%p] %m%n");
+    this->setFormatter(patternFormatter);
 }
 
 void StdoutLogAppender::append(LogEvent::ptr event) {

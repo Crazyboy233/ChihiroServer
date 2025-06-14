@@ -1,9 +1,20 @@
 #include "LogFormatter.h"
-#include "UTF8/utf8.h"
+// #include "UTF8/utf8.h"
 #include <sstream>
 #include <chrono>
+// #include <iostream>
 
 namespace chihiro {
+
+class LiteralFormatItem;
+class DateTimeFormatItem;
+class LevelFormatItem;
+class MessageFormatItem;
+class FileNameFormatItem;
+class LineNumberFormatItem;
+class ThreadIDFormatItem;
+class FiberIDFormatItem;
+
 
 PatternFormatter::PatternFormatter(const std::string & pattern)
     : m_pattern(pattern) 
@@ -14,9 +25,11 @@ PatternFormatter::PatternFormatter(const std::string & pattern)
 
 std::string PatternFormatter::format(const LogEvent::ptr& event) {
     std::ostringstream oss;
+    // std::cout << m_items.size() << std::endl;
     for(auto item : m_items) {
         item->format(oss, event);
     }
+    oss << std::endl;
     return oss.str();
 }
 
@@ -33,19 +46,85 @@ void PatternFormatter::init() {
     };
 
     ParseState state = ParseState::Normal;
-    std::string fmt;
+    std::string fmt;    // 存储指令格式，例如 "d","p"
+    std::string str;    // 存储普通文本
 
-    std::string::iterator it = m_pattern.begin();
-    while (it != m_pattern.end()) {
-        uint32_t codePoint = utf8::next(it, m_pattern.end());
+    for(auto ch : m_pattern) {
+        switch(state) {
+            case ParseState::Normal:
+                if (ch == '%') {
+                    if(!str.empty()) {
+                        m_items.push_back(std::static_pointer_cast<FormatItem>(std::make_shared<LiteralFormatItem>(str)));
+                        str.clear();
+                    }
+                    state = ParseState::Percent;
+                } else {
+                    str += ch;
+                }
+                break;
 
-        std::string str;    // 准备存放字符的 str
-        utf8::append(codePoint, std::back_insert_iterator(str));
-        
-        // 输出字符
-        // std::cout << "字符: " << str << std::endl;
+            case ParseState::Percent:
+                if(ch == '%') {
+                    // %% 转义为 %
+                    str = "%";
+                    m_items.push_back(std::static_pointer_cast<FormatItem>(std::make_shared<LiteralFormatItem>(str)));
+                    str.clear();
+                    state = ParseState::Normal;
+                } else {
+                    // 记录指令格式
+                    fmt = ch;
+                    state = ParseState::Format;
+                }
+                break;
+
+            case ParseState::Format:
+                // 指令格式解析完成
+                if(fmt == "d") {
+                    m_items.push_back(std::static_pointer_cast<FormatItem>(std::make_shared<DateTimeFormatItem>()));
+                } else if(fmt == "p") {
+                    m_items.push_back(std::static_pointer_cast<FormatItem>(std::make_shared<LevelFormatItem>()));
+                } else if(fmt == "m") {
+                    m_items.push_back(std::static_pointer_cast<FormatItem>(std::make_shared<MessageFormatItem>()));
+                } else if(fmt == "f") {
+                    m_items.push_back(std::static_pointer_cast<FormatItem>(std::make_shared<FileNameFormatItem>()));
+                } else if(fmt == "l") {
+                    m_items.push_back(std::static_pointer_cast<FormatItem>(std::make_shared<LineNumberFormatItem>()));
+                } else if(fmt == "t") {
+                    m_items.push_back(std::static_pointer_cast<FormatItem>(std::make_shared<ThreadIDFormatItem>()));
+                } else if(fmt == "n") {
+                    m_items.push_back(std::static_pointer_cast<FormatItem>(std::make_shared<LiteralFormatItem>("\n")));
+                } else {
+                    m_error = true;
+                }
+                state = ParseState::Normal;
+                break;
+        }   
     }
+
+    // std::string::iterator it = m_pattern.begin();
+    // while (it != m_pattern.end()) {
+    //     uint32_t codePoint = utf8::next(it, m_pattern.end());
+
+    //     std::string str;    // 准备存放字符的 str
+    //     utf8::append(codePoint, std::back_insert_iterator(str));
+        
+    //     // 输出字符
+    //     // std::cout << "字符: " << str << std::endl;
+    // }
 }
+
+
+// 静态文本格式化项,例如 []
+class LiteralFormatItem : public PatternFormatter::FormatItem {
+public:
+    LiteralFormatItem(const std::string& literal) : m_literal(literal) {}
+
+    void format(std::ostream& os, const LogEvent::ptr& event) override {
+        os << m_literal << " ";
+    }
+private:
+    std::string m_literal;
+};
 
 
 // 时间格式化项
@@ -56,7 +135,7 @@ public:
     void format(std::ostream& os, const LogEvent::ptr& event) override {
         // std::time_t timestamp = event->getTime();
         // auto time_point = std::chrono::system_clock::from_time_t(timestamp);
-        os << event->getTime();
+        os << event->getTime() << " ";
     }
 };
 
@@ -65,7 +144,7 @@ public:
 class LevelFormatItem : public PatternFormatter::FormatItem {
 public:
     void format(std::ostream& os, const LogEvent::ptr& event) override {
-        os << event->getLevelStr();
+        os << event->getLevelStr() << " ";
     }    
 };
 
@@ -74,7 +153,7 @@ public:
 class MessageFormatItem : public PatternFormatter::FormatItem {
 public:
     void format(std::ostream& os, const LogEvent::ptr& event) override {
-        os << event->getContent();
+        os << event->getContent() << " ";
     }
 };
 
@@ -83,7 +162,7 @@ public:
 class FileNameFormatItem : public PatternFormatter::FormatItem {
 public:
     void format(std::ostream& os, const LogEvent::ptr& event) override {
-        os << event->getFileName();
+        os << event->getFileName() << " ";
     }
 };
 
@@ -92,7 +171,7 @@ public:
 class LineNumberFormatItem : public PatternFormatter::FormatItem {
 public:
     void format(std::ostream& os, const LogEvent::ptr& event) override {
-        os << event->getLine();
+        os << event->getLine() << " ";
     }
 };
 
@@ -101,7 +180,7 @@ public:
 class ThreadIDFormatItem : public PatternFormatter::FormatItem {
 public:
     void format(std::ostream& os, const LogEvent::ptr& event) override {
-        os << event->getThreadId();
+        os << event->getThreadId() << " ";
     }
 };
 
@@ -110,7 +189,7 @@ public:
 class FiberIDFormatItem : public PatternFormatter::FormatItem {
 public:
     void format(std::ostream& os, const LogEvent::ptr& event) override {
-        os << event->getFiberId();
+        os << event->getFiberId() << " ";
     }
 };
 
