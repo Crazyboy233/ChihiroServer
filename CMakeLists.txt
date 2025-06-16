@@ -29,14 +29,4 @@ set(LOG_SOURCES
     ${LOG_SRC_DIR}/Logger.cc
 )
 
-# add_library(chihiro_log STATIC ${LOG_SOURCES})
-
 add_executable(chihiro chihiro/main.cpp ${LOG_SOURCES})
-
-# target_link_libraries(main PRIVATE chihiro_log)
-
-# target_include_directories(chihiro_log 
-#     PUBLIC 
-#     ${LOG_INCLUDE_DIR}
-#     ${UTF8_INCLUDE_DIR}
-# )
