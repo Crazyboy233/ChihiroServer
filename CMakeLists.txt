@@ -31,7 +31,7 @@ set(LOG_SOURCES
 
 # add_library(chihiro_log STATIC ${LOG_SOURCES})
 
-add_executable(main chihiro/main.cpp ${LOG_SOURCES})
+add_executable(chihiro chihiro/main.cpp ${LOG_SOURCES})
 
 # target_link_libraries(main PRIVATE chihiro_log)
 
