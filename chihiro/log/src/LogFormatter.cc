@@ -2,7 +2,6 @@
 // #include "UTF8/utf8.h"
 #include <sstream>
 #include <chrono>
-// #include <iostream>
 
 namespace chihiro {
 
@@ -25,7 +24,6 @@ PatternFormatter::PatternFormatter(const std::string & pattern)
 
 std::string PatternFormatter::format(const LogEvent::ptr& event) {
     std::ostringstream oss;
-    // std::cout << m_items.size() << std::endl;
     for(auto item : m_items) {
         item->format(oss, event);
     }
@@ -70,12 +68,14 @@ void PatternFormatter::init() {
                     m_items.push_back(std::static_pointer_cast<FormatItem>(std::make_shared<LiteralFormatItem>(str)));
                     str.clear();
                     state = ParseState::Normal;
+                    break;
                 } else {
                     // 记录指令格式
                     fmt = ch;
                     state = ParseState::Format;
                 }
-                break;
+                // break;
+                // 此处不能执行break，否则会导致需要解析的格式字符串(如"p","m","n")后一位不做任何处理。
 
             case ParseState::Format:
                 // 指令格式解析完成
@@ -100,17 +100,6 @@ void PatternFormatter::init() {
                 break;
         }   
     }
-
-    // std::string::iterator it = m_pattern.begin();
-    // while (it != m_pattern.end()) {
-    //     uint32_t codePoint = utf8::next(it, m_pattern.end());
-
-    //     std::string str;    // 准备存放字符的 str
-    //     utf8::append(codePoint, std::back_insert_iterator(str));
-        
-    //     // 输出字符
-    //     // std::cout << "字符: " << str << std::endl;
-    // }
 }
 
 
@@ -153,7 +142,7 @@ public:
 class MessageFormatItem : public PatternFormatter::FormatItem {
 public:
     void format(std::ostream& os, const LogEvent::ptr& event) override {
-        os << event->getContent() << " ";
+        os << "\"" << event->getContent() << "\"";
     }
 };
 

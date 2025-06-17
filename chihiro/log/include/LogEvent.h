@@ -1,5 +1,5 @@
-#ifndef LOGGEREVENT_H
-#define LOGGEREVENT_H
+#ifndef __LOGGEREVENT_H__
+#define __LOGGEREVENT_H__
 
 #include "LogLevel.h"
 #include <memory>
