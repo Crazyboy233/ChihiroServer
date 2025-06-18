@@ -5,6 +5,6 @@ using namespace chihiro;
 
 int main() {
     Logger log;
-    log.log(LogLevel::DEBUG, "this is a log");
+    LOG_DEBUG(&log, "This is a log");
     return 0;
 }

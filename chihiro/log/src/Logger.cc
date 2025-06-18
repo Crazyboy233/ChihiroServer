@@ -12,14 +12,14 @@ Logger::Logger(const std::string & name)
     m_appenders.push_back(coutAppender);
 }
 
-void Logger::log(LogLevel level, const std::string& msg) {
+void Logger::log(LogLevel level, const std::string& msg, const std::string& filename, const int lineNum) {
     // 检查日志级别，如果低于设置级别，则忽略
     if(level < m_level) {
         return;
     }
 
     // 否则创建日志事件
-    auto event = std::make_shared<LogEvent>(level, "filename", __LINE__, 0, 0, 0, 0, msg);
+    auto event = std::make_shared<LogEvent>(level, filename, lineNum, 0, 0, 0, "", msg);
     event->setLoggerName(m_name);
 
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -31,29 +31,29 @@ void Logger::log(LogLevel level, const std::string& msg) {
 
     // 如果有父 Logger 并且开启了向上传递，则将日志也发送给父 Logger
     if(m_parent != nullptr) {
-        m_parent->log(m_level, msg);
+        m_parent->log(m_level, msg, filename, lineNum);
     }
 }
 
-void Logger::debug(const std::string& msg) {
-    log(LogLevel::DEBUG, msg);
-}
+// void Logger::debug(const std::string& msg) {
+//     log(LogLevel::DEBUG, msg);
+// }
 
-void Logger::info(const std::string& msg) {
-    log(LogLevel::INFO, msg);
-}
+// void Logger::info(const std::string& msg) {
+//     log(LogLevel::INFO, msg);
+// }
 
-void Logger::warn(const std::string& msg) {
-    log(LogLevel::WARN, msg);
-}
+// void Logger::warn(const std::string& msg) {
+//     log(LogLevel::WARN, msg);
+// }
 
-void Logger::error(const std::string& msg) {
-    log(LogLevel::ERROR, msg);
-}
+// void Logger::error(const std::string& msg) {
+//     log(LogLevel::ERROR, msg);
+// }
 
-void Logger::fatal(const std::string& msg) {
-    log(LogLevel::FATAL, msg);
-}
+// void Logger::fatal(const std::string& msg) {
+//     log(LogLevel::FATAL, msg);
+// }
 
 void Logger::addAppender(LogAppender::ptr appender) {
     std::lock_guard<std::mutex> lock(m_mutex);  // 加锁

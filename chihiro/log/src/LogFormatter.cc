@@ -1,8 +1,5 @@
 #include "LogFormatter.h"
-// #include "UTF8/utf8.h"
 #include <sstream>
-#include <chrono>
-
 namespace chihiro {
 
 class LiteralFormatItem;
@@ -122,8 +119,6 @@ public:
     // explicit DateTimeFormatItem(const std::string& format = "%Y-%m-%d %H:%M:%S") {}
 
     void format(std::ostream& os, const LogEvent::ptr& event) override {
-        // std::time_t timestamp = event->getTime();
-        // auto time_point = std::chrono::system_clock::from_time_t(timestamp);
         os << event->getTime() << " ";
     }
 };
@@ -142,7 +137,7 @@ public:
 class MessageFormatItem : public PatternFormatter::FormatItem {
 public:
     void format(std::ostream& os, const LogEvent::ptr& event) override {
-        os << "\"" << event->getContent() << "\"";
+        os << "\"" << event->getContent() << "\" ";
     }
 };
 

@@ -7,6 +7,12 @@
 #include "LogFormatter.h"
 #include <list>
  
+#define LOG_DEBUG(logger, msg) (logger)->log(chihiro::LogLevel::DEBUG, msg, __FILE__, __LINE__)
+#define LOG_INFO(logger, msg) (logger)->log(chihiro::LogLevel::INFO, msg, __FILE__, __LINE__)
+#define LOG_WARN(logger, msg) (logger)->log(chihiro::LogLevel::WARN, msg, __FILE__, __LINE__)
+#define LOG_ERROR(logger, msg) (logger)->log(chihiro::LogLevel::ERROR, msg, __FILE__, __LINE__)
+#define LOG_FATAL(logger, msg) (logger)->log(chihiro::LogLevel::FATAL, msg, __FILE__, __LINE__)
+
 namespace chihiro {
     
 class LogFormatter;
@@ -19,12 +25,12 @@ public:
     explicit Logger(const std::string & name = "root");
 
     // 日志记录接口
-    void log(LogLevel level, const std::string& msg);
-    void debug(const std::string& msg);
-    void info(const std::string& msg);
-    void warn(const std::string& msg);
-    void error(const std::string& msg);
-    void fatal(const std::string& msg);
+    void log(LogLevel level, const std::string& msg, const std::string& filename, const int lineNum);
+    // void debug(const std::string& msg);
+    // void info(const std::string& msg);
+    // void warn(const std::string& msg);
+    // void error(const std::string& msg);
+    // void fatal(const std::string& msg);
 
     // 配置方法
     void addAppender(LogAppender::ptr appender);
